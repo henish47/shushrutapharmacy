@@ -1,0 +1,294 @@
+/* ========== Global Styles ========== */
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* ========== Header Styles ========== */
+header .navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* ========== Main Section Styles ========== */
+main h1 {
+  font-size: 2.5rem;
+}
+
+/* ========== Footer Styles ========== */
+footer {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  background-color: #1e4e36;
+  color: white;
+}
+
+footer .fab,
+footer .fas {
+  transition: color 0.3s ease;
+}
+
+footer .fab:hover,
+footer .fas:hover {
+  color: green;
+}
+
+/* ========== Navigation Styles ========== */
+nav {
+  background-color: white;
+  /* padding: 10px 20px; */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.btn {
+  border-radius: 20px;
+  padding: 5px 15px;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.navbar-icons i {
+  font-size: 1.2rem;
+  color: #2c6e49;
+  margin-right: 15px;
+}
+
+.navbar-icons {
+  justify-content: end;
+}
+
+.navbar-nav .nav-link {
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 500;
+  padding: 10px 15px;
+  text-decoration: none;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 20px;
+}
+
+.navbar-nav .nav-item:last-child {
+  margin-right: 0;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: #1e4e36;
+  border-radius: 5px;
+}
+
+/* ========== Login Button Styles ========== */
+.login-btn {
+  border: 2px solid #2c6e49;
+  color: #2c6e49;
+  padding: 5px 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+}
+
+.login-btn:hover {
+  background-color: #2c6e49;
+  color: white;
+}
+
+/* ========== Navbar Toggler Styles ========== */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  color: white;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* ========== Pharmacy Section Styles ========== */
+.pharmacy-section {
+  background-color: #33543a;
+  padding: 30px 15px;
+  color: white;
+  border-radius: 8px;
+}
+
+/* ========== Search Bar Styles ========== */
+.search-bar {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex-grow: 1;
+  margin-right: 10px;
+  color : black !important;
+}
+
+.search-bar .btn {
+  border: none;
+  background: transparent;
+}
+
+/* ========== Section 2 Styles ========== */
+.navbar_img {
+  background-color: #588862;
+  height: auto;
+  border-bottom-left-radius: 31px;
+  border-bottom-right-radius: 31px;
+  padding-top: 10px;
+}
+
+#search {
+  background-color: #d9d9d9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 110px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+/* carsouel  */
+
+.carousel-item img {
+  height: 505px;
+  object-fit: cover; /* Ensures images fit well */
+}
+
+@media (max-width: 768px) {
+  .carousel-item img {
+    height: 250px; /* Smaller height for mobile */
+  }
+}
+
+/* ========== Card Styles ========== */
+.card {
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.card-text {
+  font-size: 1.1em;
+  color: #34495e;
+}
+
+.card-body {
+  text-align: center;
+}
+
+.card-body a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ========== Button Styles ========== */
+.btn-primary {
+  background-color: #2ecc71;
+  border: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #27ae60;
+}
+
+/* ========== Media Queries ========== */
+@media (max-width: 768px) {
+  .login-btn {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+  .left_right_img {
+    display: none !important;
+  }
+
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .navbar-icons i {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+
+  .col-12 {
+    margin-bottom: 20px;
+  }
+
+  .col-sm-4 img {
+    height: 100px;
+    width: 100px;
+  }
+
+  
+}
+@media screen and (max-width: 767px) {
+  .left_right_img {
+      display: none !important;
+  }
+}
+
+
+@media (max-width: 576px) {
+  .card-img-top {
+    height: 150px;
+  }
+  
+  .left_right_img {
+    display: none;
+  }
+
+
+  .card {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .card img {
+    height: 200px;
+    width: 200px;
+    margin-top: 10px;
+  }
+
+  .card-img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; /* Adjust as per your image aspect ratio */
+}
+.card-img-top {
+    max-height: 150px; /* Ensures images fit well */
+    object-fit: contain; /* Maintains the image aspect ratio */
+}
+}
+
