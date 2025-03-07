@@ -155,7 +155,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!-- hello henish -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
