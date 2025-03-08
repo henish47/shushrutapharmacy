@@ -1,3 +1,10 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isLoggedIn = isset($_SESSION['user']);
+?>
+<!DOCTYPE html>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -260,70 +267,70 @@
     </style>
 </head>
 <body>
-
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="index.php">
     <img src=".\assets\logo.jpg" alt="Company Logo">
 </a>
-        <!-- Middle Section (Shopping Cart, Login & Sign Up Buttons) -->
-        <div class="d-flex align-items-center flex-wrap gap-3">
-        <form method="post" action="whishlist.php">
-        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-        <!-- <button type="submit" name="add_to_wishlist" class="btn btn-outline-danger btn-sm">
-        <i class="bi bi-heart"></i> whishlist
-        </button> -->
-    </form>
 
+        <!-- Navbar Icons -->
+        <div class="navbar-icons d-flex align-items-center ms-auto">
             <!-- Shopping Cart Icon -->
-            <a href="add_to_cart.php">
-                <i class="fas fa-shopping-cart" style="font-size: 20px;color: #28a745;"></i>
+            <a href="add_to_cart.php" class="me-3">
+                <i class="fas fa-shopping-cart fs-5"></i>
             </a>
 
-            <!-- Login & Sign Up Buttons -->
-            <a href="login.php" class="login-btn">
-                <span>Login</span>
-                <i class="fas fa-user-circle"></i>
-            </a>
-            <a href="signup.php" class="login-btn">
-                <span>Sign Up</span>
-                <i class="fas fa-user-plus"></i>    
-            </a>
+            <!-- If User is Logged In -->
+            <?php if ($isLoggedIn): ?>
+                <div class="dropdown">
+                    <a href="#" id="profileDropdown" class="dropdown-toggle" data-bs-toggle="dropdown">
+                        <img src="<?= ($_SESSION['user']['profile_pic'] ?? 'assets/profile.jpg') . '?t=' . time(); ?>" 
+                             alt="Profile" class="profile-pic rounded-circle" 
+                             style="width: 40px; height: 40px;">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!-- Profile Section -->
+                        <li class="dropdown-item text-center">
+                            <img src="<?= ($_SESSION['user']['profile_pic'] ?? 'assets/profile.jpg') . '?t=' . time(); ?>" 
+                                 alt="Profile" class="rounded-circle border border-white" 
+                                 style="width: 50px; height: 50px;">
+                            <p class="mt-2 mb-1 fw-bold"><?= $_SESSION['user']['username'] ?></p>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
 
-            <!-- Profile Section (Moves Left on Small Screens) -->
-            <div class="dropdown">
-    <a href="#" id="profileDropdown" class="dropdown-toggle" data-bs-toggle="dropdown">
-        <img src="assets/profile.jpg" alt="Profile" class="profile-pic" 
-             style="width: 40px; height: 40px; border-radius: 50%;">
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end">
-        <li class="dropdown-item text-center profile-header">
-            <img src="assets/profile.jpg" alt="Profile" class="rounded-circle border border-white profile-img">
-            <p class="mt-2 mb-1 username">Username</p>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-        <a class="dropdown-item" href="edit_profile.php">
-            <i class="fas fa-user-edit me-2" style="color: #28a745;"></i> Edit Profile
-        </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="your_order.php">
-                <i class="fas fa-box me-2" style="color: #28a745;"></i> Your Orders
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="logout.html">
-                <i class="fas fa-sign-out-alt me-2" style="color: #28a745;"></i> Logout
-            </a>
-        </li>
-    </ul>
-</div>
+                        <!-- Edit Profile -->
+                        <li>
+                            <a class="dropdown-item" href="edit_profile.php">
+                                <i class="fas fa-user-edit me-2"></i> Edit Profile
+                            </a>
+                        </li>
 
+                        <!-- Orders -->
+                        <li>
+                            <a class="dropdown-item" href="./your_order.php">
+                                <i class="fas fa-box-open me-2"></i> Your Orders
+                            </a>
+                        </li>
+
+                        <!-- Logout -->
+                        <li>
+                            <a class="dropdown-item" href="./logout.php">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            <?php else: ?>
+                <!-- If User is Not Logged In -->
+                <a href="login.php" class="btn btn-outline-primary ms-3">Login</a>
+                <a href="signup.php" class="btn btn-primary ms-2">Sign Up</a>
+            <?php endif; ?>
         </div>
     </div>
 </nav>
+
 
 <!-- Database Connection -->
 <?php
@@ -362,6 +369,7 @@ $categoryResult = $conn->query($categoryQuery);
                         Sushruta
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="./index.php">All Products</a></li>
                     <li><a class="dropdown-item" href="#">Baby's care</a></li>
                     <li><a class="dropdown-item" href="#">Drink & Supplements</a></li>
                     <li><a class="dropdown-item" href="#">Women Care</a></li>
@@ -398,6 +406,6 @@ $categoryResult = $conn->query($categoryQuery);
 </nav>
 
 <?php
-// कनेक्शन बंद करें
+
 $conn->close();
 ?>

@@ -1,0 +1,243 @@
+
+/* Navbar Styles */
+.navbar {
+    background-color: rgb(26, 84, 51);
+    padding: 10px 20px;
+}
+
+.navbar-brand {
+    font-family: "Edu AU VIC WA NT Dots", serif;
+    font-optical-sizing: auto;
+    font-weight: <weight>;
+    font-style: normal;
+}
+
+.login-btn {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: #2c6e49;
+    border: 1px solid #2c6e49;
+    background-color: transparent;
+}
+
+.login-btn:hover {
+    background-color: #2c6e49;
+    color: white;
+}
+
+/* Flexbox for Navbar Icons and Buttons */
+.navbar-icons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Responsive adjustments for buttons */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .login-btn {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+
+    .navbar-icons {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .login-btn + .login-btn {
+        margin-top: 2px;
+    }
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Medium to Large Screen Styles (flex direction in row) */
+@media (min-width: 577px) {
+    .navbar-icons {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .login-btn {
+        font-size: 0.85rem;
+        padding: 5px 12px;
+    }
+}
+
+.dropdown-menu {
+    min-width: 200px;
+    text-align: center;
+}
+
+.dropdown-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+/* General Styling */
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: capitalize;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    position: relative;
+}
+
+
+
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile Image */
+.profile-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+/* Username Styling */
+.username {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Dropdown Items */
+.dropdown-item {
+    color: #333;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Icons inside Dropdown */
+.dropdown-item i {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+/* Hover Effect */
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+/* Divider Styling */
+.dropdown-divider {
+    margin: 5px 0;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+.navbar .d-flex {
+    flex-wrap: nowrap !important;
+    justify-content: center;
+    gap: 10px;
+}
+
+.login-btn {
+    white-space: nowrap; /* Prevents button text from wrapping */
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Ensures proper spacing */
+}
+}
+/* .navbar-brand img {
+mix-blend-mode: multiply;
+width: 100px;
+height: 67%;
+margin-top: -10px;
+} */
+.navbar-icons a i {
+color: #28a745; /* Bootstrap success green color */
+}
+
+/* Add underline effect on hover */
+.navbar-nav .nav-link {
+position: relative;
+display: inline-block;
+padding-bottom: 5px;
+}
+
+.navbar-nav .nav-link:hover {
+color:rgb(107, 171, 115) !important; /* Bootstrap's gray color */ 
+}
+
+.navbar-nav .nav-link::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 50%;
+width: 0;
+height: 2px;
+display: none;
+
+
+}
+
+.navbar-nav .nav-link:hover::after {
+width: 100%;
+left: 0;
+}
+.navbar-brand img {
+max-height: 50px; /* Default for large screens */
+width: auto;
+object-fit: contain;
+}
+
+@media (max-width: 768px) {
+.navbar-brand img {
+max-height: 60px; /* Reduce size for tablets */
+}
+
+.profile-pic {
+width: 30px !important;
+height: 30px !important;
+}
+
+.profile-img {
+width: 60px !important;
+height: 60px !important;
+}
+.navbar-brand img {
+height: 100px; /* Default height for larger screens */
+width: auto;
+
+/* Prevents image overflow */
+}
+
+.login-btn span {
+font-size: 0.9rem;
+}
+
+.login-btn i {
+font-size: 16px;
+}
+
+.navbar {
+padding: 10px 15px; /* Adjust padding for smaller screens */
+}
+
+}

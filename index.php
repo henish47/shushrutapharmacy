@@ -19,6 +19,38 @@ $products = [
     ['id' => 16, 'name' => 'Oziva Protien & Herbs', 'price' => 4099, 'image' => './assets/Womens care/picture-11 (7).webp', 'category' => 'womensCare']
 ];
 
+// Initialize cart if not already initialized
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Handle adding to cart via AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
+    $productId = intval($_POST['product_id']);
+    $product = array_filter($products, fn($p) => $p['id'] === $productId);
+
+    if (!empty($product)) {
+        $product = array_values($product)[0];
+        $product['quantity'] = 1;
+
+        // Check if the product is already in the cart
+        $found = false;
+        foreach ($_SESSION['cart'] as &$cartItem) {
+            if ($cartItem['id'] === $product['id']) {
+                $cartItem['quantity']++;
+                $found = true;
+                break;
+            }
+        }
+
+        // If not found, add new product to the cart
+        if (!$found) {
+            $_SESSION['cart'][] = $product;
+        }
+    }
+    echo "success"; // Respond with success message for AJAX
+    exit;
+}
 ?>
 
     <!DOCTYPE html>
@@ -92,49 +124,52 @@ $products = [
                 <div class="container mt-4">
                     <h1 style="font-weight:700;"><span style="color:green; font-weight:700">Baby's</span> Care</h1>
                     <div class="row">
-                        <?php foreach ($products as $product): ?>
-                            <?php if ($product['category'] === 'babysCare'): ?>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
-                                    <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
-                                        <!-- Product Image -->
-                                        <div class="position-relative">
-                                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
-                             <img 
-                                  src="<?php echo $product['image']; ?>" 
-                                         class="card-img-top img-fluid product-img"
-                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                     >
-                                            </a>
-                                            <!-- Wishlist Button (Always Visible) -->
-                                            <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                        <!-- Card Body -->
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                            <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
-
-                                            <!-- Button Group (Always Visible) -->
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <!-- View Product Button (No Hover Effect) -->
-                                                <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
-                                                    <i class="bi bi-eye"></i> 
-                                                </a>
-                                                <!-- Add to Cart Button -->
-                                                <form method="post" action="add_to_cart.php">
-                                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                                                    <button type="submit" class="btn btn-primary rounded-pill px-3">
-                                                        <i class="bi bi-cart"></i> Add to Cart
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
+    <?php foreach ($products as $product): ?>
+        <?php if ($product['category'] === 'babysCare'): ?>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
+                <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
+                    <!-- Product Image -->
+                    <div class="position-relative">
+                        <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
+                            <img 
+                                src="<?php echo $product['image']; ?>" 
+                                class="card-img-top img-fluid product-img"
+                                alt="<?php echo htmlspecialchars($product['name']); ?>">
+                        </a>
+                        <!-- Wishlist Button -->
+                        <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
+                            <i class="bi bi-heart"></i>
+                        </button>
                     </div>
+                    <!-- Card Body -->
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
+                        <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
+
+                        <!-- Button Group -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <!-- View Product Button -->
+                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3">
+                                <i class="bi bi-eye"></i> 
+                            </a>
+                            <!-- add to cart btn  -->
+                            <form class="add-to-cart-form" method="POST" action="add_to_cart.php">
+    <input type="hidden" name="product_id" value="1">
+    <input type="hidden" name="product_name" value="T-Shirt">
+    <input type="hidden" name="product_price" value="499">
+    <input type="hidden" name="product_image" value="images/tshirt.jpg"> <!-- Ensure correct path -->
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
+</form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
+
                     <div class="text-center mt-3">
                         <a href="baby'sCare.php" class="btn btn-success btn-lg">View More</a>
                     </div>
@@ -172,13 +207,17 @@ $products = [
                                                 <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
                                                     <i class="bi bi-eye"></i> 
                                                 </a>
-                                                <!-- Add to Cart Button -->
-                                                <form method="post" action="add_to_cart.php">
-                                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                                                    <button type="submit" class="btn btn-primary rounded-pill px-3">
-                                                        <i class="bi bi-cart"></i> Add to Cart
-                                                    </button>
-                                                </form>
+                                                    <!-- Add to Cart Button -->
+                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
+    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
+    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
+    <button type="submit" name="add_to_cart" class="btn btn-primary">
+        Add to Cart
+    </button>
+</form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -223,13 +262,17 @@ $products = [
                                                 <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
                                                     <i class="bi bi-eye"></i> 
                                                 </a>
-                                                <!-- Add to Cart Button -->
-                                                <form method="post" action="add_to_cart.php">
-                                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                                                    <button type="submit" class="btn btn-primary rounded-pill px-3">
-                                                        <i class="bi bi-cart"></i> Add to Cart
-                                                    </button>
-                                                </form>
+                                                    <!-- Add to Cart Button -->
+                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
+    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
+    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
+    <button type="submit" name="add_to_cart" class="btn btn-primary">
+        Add to Cart
+    </button>
+</form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -275,13 +318,17 @@ $products = [
                                                 <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
                                                     <i class="bi bi-eye"></i> 
                                                 </a>
-                                                <!-- Add to Cart Button -->
-                                                <form method="post" action="add_to_cart.php">
-                                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                                                    <button type="submit" class="btn btn-primary rounded-pill px-3">
-                                                        <i class="bi bi-cart"></i> Add to Cart
-                                                    </button>
-                                                </form>
+                                                      <!-- Add to Cart Button -->
+                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
+    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
+    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
+    <button type="submit" name="add_to_cart" class="btn btn-primary">
+        Add to Cart
+    </button>
+</form>
+
                                             </div>
                                         </div>
                                     </div>

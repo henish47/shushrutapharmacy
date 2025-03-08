@@ -1,126 +1,137 @@
+<?php
+session_start();
+require 'config.php'; // Database connection
+
+$error = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+
+    // Check if user exists in the database
+    $stmt = $conn->prepare("SELECT * FROM sign_up WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+
+        // Check if password matches
+        if (password_verify($password, $user['password'])) {
+            if ($user['verified'] == 1) {
+                // Store user data in session
+                $_SESSION['logged_in'] = true;
+                $_SESSION['user'] = [
+                    'username' => $user['username'],
+                    'email' => $user['email'],
+                    'profile_pic' => $user['profile_pic'] ?? 'assets/profile.jpg' // Default if empty
+                ];
+
+                // Redirect to refresh navbar with new session data
+                header("Location: index.php");
+                exit();
+            } else {
+                $error = "Your email is not verified. Please check your inbox.";
+            }
+        } else {
+            $error = "Invalid email or password!";
+        }
+    } else {
+        $error = "No user found with this email!";
+    }
+}
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHUSHRUTA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="shortcut icon" href="./assets/logo2.jpg" type="image/x-icon">
-    <script src="./jquery-3.7.1.min.js"></script>
-    <script src="./additional-methods.js"></script>
-    <script src="./jquery.validate.min.js"></script>
+    <title>SHUSHRUTA | Login</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background: #f4f4f9;
         }
-
         .container {
             max-width: 400px;
             margin: 50px auto;
             background: #fff;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .form-header {
-            background-color: #2c6e49;
-            color: white;
             text-align: center;
-            padding: 20px;
         }
-
-        .form-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .form-body {
-            padding: 20px;
-        }
-
-        .form-body label {
+        h2 { color: #2c6e49; }
+        label {
             display: block;
+            text-align: left;
             margin-bottom: 8px;
             font-weight: bold;
             color: #333;
         }
-
-        .form-body input[type="email"],
-        .form-body input[type="password"] {
+        input {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 1rem;
         }
-
-        .form-body input[type="submit"] {
+        .btn {
             background-color: #2c6e49;
             color: white;
-            font-size: 1rem;
             padding: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
         }
-
-        .form-body input[type="submit"]:hover {
+        .btn:hover {
             background-color: #25543e;
         }
-
-        .form-footer {
-            text-align: center;
-            padding: 15px;
-            background: #f4f4f4;
-        }
-
-        .form-footer a {
-            color: #2c6e49;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-        .is-invalid {
-            border-color: red !important;
-        }
         .error {
-            color: red !important;
-            font-style: italic;
+            color: red;
             font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .footer {
+            margin-top: 15px;
+        }
+        .footer a {
+            color: #2c6e49;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="form-header">
-            <h2>Login</h2>
-        </div>
-        <div class="form-body">
-            <form id="loginForm" action="login.php" method="POST">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <h2>Login</h2>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <?php if (!empty($error)) { ?>
+            <p class="error"><?= $error; ?></p>
+        <?php } ?>
 
-                <input type="submit" value="Login">
-            </form>
-        </div>
-        <div class="form-footer">
-            <p>Don't have an account? <a href="./signup.php">Sign Up here</a></p>
-            <p><a href="./forgot_password.php">Forgot Password?</a></p>
+        <form action="login.php" method="POST">
+            <label for="email">Email</label>
+            <input type="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+
+            <button type="submit" class="btn">Login</button>
+        </form>
+
+        <div class="footer">
+            <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
+            <p><a href="forgot_password.php">Forgot Password?</a></p>
         </div>
     </div>
-
-    
 </body>
 </html>
