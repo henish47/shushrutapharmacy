@@ -51,6 +51,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHUSHRUTA | Login</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- <script src="./jquery-3.7.1.min.js"></script> 
+    <script src="./jquery.validate.min.js"></script>
+    <script src="./additional-methods.js"></script> -->
+    <script src="./jquery-3.7.1.min.js"></script>
+    <script src="./jquery.validate.min.js"></script>
+    <script src="./additional-methods.js"></script>
+   
+    <script src="./validtion.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -118,12 +127,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="error"><?= $error; ?></p>
         <?php } ?>
 
-        <form action="login.php" method="POST">
-            <label for="email">Email</label>
-            <input type="email" name="email" required>
+        <form action="login.php" method="POST" class="needs-validation" id="myForm" novalidate>
+       
+            <label for="email" >Email</label>
+            <input type="email" name="email"  data-validation="required email" required>
+            <span id="emailError" class="text-danger error"></span>
 
             <label for="password">Password</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" data-validation="required password" required>
+            <span id="passwordError" class="text-danger error"></span>
 
             <button type="submit" class="btn">Login</button>
         </form>

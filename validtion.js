@@ -11,23 +11,41 @@
 
         if (fieldType.includes("required") && value === "") {
             errorMessage = "This field is required.";
-        } else if (fieldType.includes("email") && !/^\S+@\S+\.\S+$/.test(value)) {
+        }
+        
+        else if (fieldType.includes("email") && !/^\S+@\S+\.\S+$/.test(value)) {
             errorMessage = "Invalid email address.";
-        } else if (fieldType.includes("password") && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(value)) {
+        }
+        
+        else if (fieldType.includes("password") && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(value)) {
             errorMessage = "Password must contain at least 8 characters, including one uppercase, one lowercase, and one number.";
-        } else if (fieldType.includes("confirmPassword") && value !== $(field.data("confirm")).val()) {
+        }
+        
+        else if (fieldType.includes("confirmPassword") && value !== $(field.data("confirm")).val()) {
             errorMessage = "Passwords do not match.";
-        } else if (fieldType.includes("terms") && !field.is(":checked")) {
+        } 
+        
+        else if (fieldType.includes("terms") && !field.is(":checked")) {
             errorMessage = "You must agree to the terms and conditions.";
-        } else if (fieldType.includes("alpha") && !/^[A-Za-z\s]+$/.test(value)) {
+        } 
+        
+        else if (fieldType.includes("alpha") && !/^[A-Za-z\s]+$/.test(value)) {
             errorMessage = "Only letters are allowed.";
-        } else if (fieldType.includes("numeric") && !/^\d+$/.test(value)) {
+        } 
+        
+        else if (fieldType.includes("numeric") && !/^\d+$/.test(value)) {
             errorMessage = "Only numbers are allowed.";
-        } else if (fieldType.includes("minLength") && value.length < minLength) {
+        }
+        
+        else if (fieldType.includes("minLength") && value.length < minLength) {
             errorMessage = "This field must be at least " + minLength + " characters long.";
-        } else if (fieldType.includes("maxLength") && value.length > maxLength) {
+        }
+        
+        else if (fieldType.includes("maxLength") && value.length > maxLength) {
             errorMessage = "This field must be no more than " + maxLength + " characters long.";
-        } else if (fieldType.includes("file")) {
+        } 
+        
+        else if (fieldType.includes("file")) {
             let file = field[0].files[0];
             if (file) {
                 if (!/\.(jpg|jpeg|png)$/i.test(file.name)) {

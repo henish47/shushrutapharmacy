@@ -1,18 +1,28 @@
+<?php
+session_start();
+
+// Initialize message variables
+$successMessage = $_SESSION['success_message'] ?? "";
+$errorMessage = $_SESSION['error_message'] ?? "";
+
+// Clear session messages after displaying
+unset($_SESSION['success_message']);
+unset($_SESSION['error_message']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHUSHRUTA</title>
+    <title>Forgot Password - SHUSHRUTA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="./jquery-3.7.1.min.js"></script>
     <script src="./jquery.validate.min.js"></script>
     <link rel="shortcut icon" href="./assets/logo2.jpg" type="image/x-icon">
 
     <style>
-        .error {
-            color: red;
-        }
+        .error { color: red; }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -80,7 +90,14 @@
             color: red !important;
             font-style: italic;
         }
-
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -88,8 +105,17 @@
     <div class="form-header">
         <h2>Forgot Password</h2>
     </div>
+
+    <?php if ($successMessage): ?>
+        <div class="message success"><?= $successMessage ?></div>
+    <?php endif; ?>
+
+    <?php if ($errorMessage): ?>
+        <div class="message error"><?= $errorMessage ?></div>
+    <?php endif; ?>
+
     <div class="form-body">
-        <form id="forgotPasswordForm" action="forgot-password-handler.php" method="POST">
+        <form id="forgotPasswordForm" action="forgot_password_handler.php" method="POST">
             <label for="email">Enter your email</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <input type="submit" value="Reset Password">

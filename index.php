@@ -152,13 +152,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
                             <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3">
                                 <i class="bi bi-eye"></i> 
                             </a>
-                            <!-- add to cart btn  -->
-                            <form class="add-to-cart-form" method="POST" action="add_to_cart.php">
-    <input type="hidden" name="product_id" value="1">
-    <input type="hidden" name="product_name" value="T-Shirt">
-    <input type="hidden" name="product_price" value="499">
-    <input type="hidden" name="product_image" value="images/tshirt.jpg"> <!-- Ensure correct path -->
-    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                                     <!-- Add to Cart Button -->
+                                                     <form method="post" action="add_to_cart.php" class="add-to-cart-form">
+    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
+    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
+    <button type="submit" name="add_to_cart" class="btn btn-primary">
+        Add to Cart
+    </button>
 </form>
 
 

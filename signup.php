@@ -162,6 +162,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="./jquery-3.7.1.min.js"></script>
+    <script src="./jquery.validate.min.js"></script>
+    <script src="./additional-methods.js"></script>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+   
+    <script src="./validtion.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -240,25 +246,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h2>Sign Up</h2>
-        <form method="POST" action="">
-            <label for="username">Username</label>
-            <input type="text" name="username" required>
+        <form method="POST" class="needs-validation" id="myForm" novalidate>
+    <label for="username">Username</label>
+    <input type="text" name="username" data-validation="required alpha" required>
+    <span id="usernameError" class="text-danger error"></span>
 
-            <label for="email">Email</label>
-            <input type="email" name="email" required>
+    <label for="email">Email</label>
+    <input type="email" name="email" data-validation="required email">
+    <span id="emailError" class="text-danger error"></span>
 
-            <label for="password">Password</label>
-            <input type="password" name="password" required>
+    <label for="password">Password</label>
+    <input type="password" name="password" data-validation="required password" required>
+    <span id="passwordError" class="text-danger error"></span>
 
-            <label for="confirm-password">Confirm Password</label>
-            <input type="password" name="confirm-password" required>
+    <label for="confirm-password">Confirm Password</label>
+    <input type="password" name="confirm-password" data-validation="required confirmPassword" required>
+    <span id="confirmPasswordError" class="text-danger error"></span>
 
-            <button type="submit">Sign Up</button>
-        </form>
+    <button type="submit">Sign Up</button>
+</form>
+
         <div class="footer">
             <a href="login.php">Already have an account? Login here</a>
         </div>
     </div>
+    <script src="./bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
