@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "admin_panel",
+			"path": "."
+		},
+		{
+			"name": "PHPMailer",
+			"path": "../../../Users/premt/Downloads/PHPMailer-20250306T072712Z-001/PHPMailer"
+		}
+	],
+	"settings": {}
+}

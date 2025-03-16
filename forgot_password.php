@@ -1,148 +1,66 @@
-<?php
-session_start();
-
-// Initialize message variables
-$successMessage = $_SESSION['success_message'] ?? "";
-$errorMessage = $_SESSION['error_message'] ?? "";
-
-// Clear session messages after displaying
-unset($_SESSION['success_message']);
-unset($_SESSION['error_message']);
-?>
-
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - SHUSHRUTA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="./jquery-3.7.1.min.js"></script>
-    <script src="./jquery.validate.min.js"></script>
-    <link rel="shortcut icon" href="./assets/logo2.jpg" type="image/x-icon">
-
+    <title>Forgot Password - Sushruta Pharmacy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        .error { color: red; }
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f9;
+            background-color: #f0f8f0;
         }
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            background: #fff;
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 128, 0, 0.2);
+        }
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+        .btn-custom:hover {
+            background-color: #218838;
+        }
+        .form-control {
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border: 1px solid #28a745;
         }
-        .form-header {
-            background-color: #2c6e49;
-            color: white;
-            text-align: center;
-            padding: 20px;
+        .form-control:focus {
+            border-color: #1e7e34;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
         }
-        .form-body {
-            padding: 20px;
-        }
-        .form-body label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
-        .form-body input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        .form-body input[type="submit"] {
-            background-color: #2c6e49;
-            color: white;
-            font-size: 1rem;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-        .form-body input[type="submit"]:hover {
-            background-color: #25543e;
-        }
-        .form-footer {
-            text-align: center;
-            padding: 15px;
-            background: #f4f4f4;
-        }
-        .form-footer a {
-            color: #2c6e49;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-        .error {
-            color: red !important;
-            font-style: italic;
-        }
-        .message {
-            text-align: center;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="form-header">
-        <h2>Forgot Password</h2>
-    </div>
 
-    <?php if ($successMessage): ?>
-        <div class="message success"><?= $successMessage ?></div>
-    <?php endif; ?>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="width: 400px;">
+        <h3 class="text-center text-success">Forgot Password</h3>
+        <p class="text-center text-muted">Enter your registered email to receive OTP</p>
 
-    <?php if ($errorMessage): ?>
-        <div class="message error"><?= $errorMessage ?></div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['message'])): ?>
+            <div class="alert alert-info text-center">
+                <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
+            </div>
+        <?php endif; ?>
 
-    <div class="form-body">
-        <form id="forgotPasswordForm" action="forgot_password_handler.php" method="POST">
-            <label for="email">Enter your email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <input type="submit" value="Reset Password">
+        <form method="post" action="send_otp.php">
+            <div class="mb-3">
+                <label class="form-label text-success">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="btn btn-custom w-100">Send OTP</button>
         </form>
-    </div>
-    <div class="form-footer">
-        <a href="login.php">Back to Login</a>
+
+        <div class="text-center mt-3">
+            <a href="login.php" class="text-decoration-none text-success">Back to Login</a>
+        </div>
     </div>
 </div>
 
-<script>
-    $(document).ready(function(){
-        $("#forgotPasswordForm").validate({
-            rules: {
-                email: {
-                    required: true,
-                    email: true
-                }
-            },
-            messages: {
-                email: {
-                    required: "Please enter your email address.",
-                    email: "Please enter a valid email address."
-                }
-            }
-        });
-    });
-</script>
 </body>
 </html>

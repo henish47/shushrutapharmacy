@@ -77,18 +77,19 @@ $products = [
     <?php include_once "footer.php"; ?>
     <script src="./bootstrap.bundle.min.js"></script>
     <script>
-                    function toggleWishlist(button) {
-                        const icon = button.querySelector("i");
-                        if (icon.classList.contains("bi-heart")) {
-                            icon.classList.remove("bi-heart");
-                            icon.classList.add("bi-heart-fill");
-                            icon.classList.add("text-danger");
-                        } else {
-                            icon.classList.remove("bi-heart-fill");
-                            icon.classList.add("bi-heart");
-                            icon.classList.remove("text-danger");
-                        }
-                    }
-                </script>
+        function toggleWishlist(button) {
+            const icon = button.querySelector("i");
+            if (icon.classList.contains("bi-heart")) {
+            icon.classList.remove("bi-heart");
+            icon.classList.add("bi-heart-fill");
+            icon.classList.add("text-danger");
+            } else {
+            icon.classList.remove("bi-heart-fill");
+            icon.classList.add("bi-heart");
+            icon.classList.remove("text-danger");
+            }
+        }
+                
+    </script>
 </body>
 </html>

@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
                 break;
             }
         }
-
+        
         // If not found, add new product to the cart
         if (!$found) {
             $_SESSION['cart'][$productId] = [

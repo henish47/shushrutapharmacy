@@ -160,126 +160,127 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Sign Up - Sushruta Pharmacy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="./jquery-3.7.1.min.js"></script>
     <script src="./jquery.validate.min.js"></script>
     <script src="./additional-methods.js"></script>
-    <link rel="stylesheet" href="./bootstrap.min.css">
-   
     <script src="./validtion.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f9;
+            background-color: #f0f8f0;
         }
-
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            padding: 20px;
-            text-align: center;
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 128, 0, 0.2);
         }
-
-        h2 {
-            margin-bottom: 20px;
-            color: #2c6e49;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-            text-align: left;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: #2c6e49;
+        .btn-custom {
+            background-color: #28a745;
             color: white;
-            font-size: 1rem;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #25543e;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 15px;
-            background: #f4f4f4;
-        }
-
-        .footer a {
-            color: #2c6e49;
-            text-decoration: none;
+            border-radius: 25px;
             font-weight: bold;
+            transition: 0.3s ease-in-out;
         }
-
-        .footer a:hover {
-            text-decoration: underline;
+        .btn-custom:hover {
+            background-color: #218838;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #28a745;
+        }
+        .form-control:focus {
+            border-color: #1e7e34;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+        }
+        .input-group-text {
+            background: white;
+            border: 1px solid #28a745;
+            cursor: pointer;
+        }
+        .input-group-text i {
+            color: #28a745;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Sign Up</h2>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="width: 400px;">
+        <h3 class="text-center text-success">Sign Up</h3>
+        <p class="text-center text-muted">Create your account</p>
+
         <form method="POST" class="needs-validation" id="myForm" novalidate>
-    <label for="username">Username</label>
-    <input type="text" name="username" data-validation="required alpha" required>
-    <span id="usernameError" class="text-danger error"></span>
+            <div class="mb-3">
+                <label class="form-label text-success">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+                <span id="usernameError" class="text-danger error"></span>
+            </div>
 
-    <label for="email">Email</label>
-    <input type="email" name="email" data-validation="required email">
-    <span id="emailError" class="text-danger error"></span>
+            <div class="mb-3">
+                <label class="form-label text-success">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                <span id="emailError" class="text-danger error"></span>
+            </div>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" data-validation="required password" required>
-    <span id="passwordError" class="text-danger error"></span>
+            <div class="mb-3">
+                <label class="form-label text-success">Password</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <span class="input-group-text" onclick="togglePassword('password', 'eye-icon1')">
+                        <i class="fas fa-eye" id="eye-icon1"></i>
+                    </span>
+                </div>
+                <span id="passwordError" class="text-danger error"></span>
+            </div>
 
-    <label for="confirm-password">Confirm Password</label>
-    <input type="password" name="confirm-password" data-validation="required confirmPassword" required>
-    <span id="confirmPasswordError" class="text-danger error"></span>
+            <div class="mb-3">
+                <label class="form-label text-success">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirm-password" name="confirm-password" class="form-control" placeholder="Confirm password" required>
+                    <span class="input-group-text" onclick="togglePassword('confirm-password', 'eye-icon2')">
+                        <i class="fas fa-eye" id="eye-icon2"></i>
+                    </span>
+                </div>
+                <span id="confirmPasswordError" class="text-danger error"></span>
+            </div>
 
-    <button type="submit">Sign Up</button>
-</form>
+            <button type="submit" class="btn btn-custom w-100">Sign Up</button>
+        </form>
 
-        <div class="footer">
-            <a href="login.php">Already have an account? Login here</a>
+        <div class="text-center mt-3">
+            <a href="login.php" class="text-decoration-none text-danger">Already have an account? Login here</a>
         </div>
     </div>
-    <script src="./bootstrap.bundle.min.js"></script>
+</div>
+
+<script>
+    function togglePassword(fieldId, iconId) {
+        var passwordField = document.getElementById(fieldId);
+        var eyeIcon = document.getElementById(iconId);
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+
 </body>
 </html>
+
 
 <?php
 // config.php - Database connection
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "shushruta_pharmacy";
+$dbname = "sushruta_pharmacy";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

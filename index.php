@@ -51,6 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
     echo "success"; // Respond with success message for AJAX
     exit;
 }
+
+// if (!isset($_SESSION['user'])) {
+//     header("Location: login.php"); // Redirect non-logged-in users
+//     exit();
+// }
+
 ?>
 
     <!DOCTYPE html>
@@ -136,10 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
                                 class="card-img-top img-fluid product-img"
                                 alt="<?php echo htmlspecialchars($product['name']); ?>">
                         </a>
-                        <!-- Wishlist Button -->
-                        <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
-                            <i class="bi bi-heart"></i>
-                        </button>
+                    <!-- Wishlist Button -->
+<button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn"
+    onclick="toggleWishlist(this, <?php echo $product['id']; ?>)">
+    <i class="bi <?php echo in_array($product['id'], $_SESSION['wishlist'] ?? []) ? 'bi-heart-fill text-danger' : 'bi-heart'; ?>"></i>
+</button>
+
                     </div>
                     <!-- Card Body -->
                     <div class="card-body text-center">

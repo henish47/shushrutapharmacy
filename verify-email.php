@@ -1,12 +1,11 @@
 <?php
-require 'config.php'; // Database connection
+require 'config.php';
 
-$message = ""; // Variable to store messages
+$message = ""; 
 
-if (isset($_GET['token'])) {
+if (isset($_GET['token'])){
     $token = $_GET['token'];
 
-    // Check if the token exists
     $checkQuery = "SELECT * FROM sign_up WHERE token = ? LIMIT 1";
     $stmt = $conn->prepare($checkQuery);
     $stmt->bind_param("s", $token);
@@ -38,6 +37,7 @@ if (isset($_GET['token'])) {
                     ❌ No token provided.
                 </div>";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +47,7 @@ if (isset($_GET['token'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification</title>
     <style>
+
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -68,15 +69,19 @@ if (isset($_GET['token'])) {
         .message {
             margin-top: 20px;
         }
+
     </style>
 </head>
 <body>
 
 <div class="container">
+
     <h2>Email Verification</h2>
+
     <div class="message">
         <?php echo $message; ?>
     </div>
+
 </div>
 
 </body>

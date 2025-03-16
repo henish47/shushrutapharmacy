@@ -1,50 +1,19 @@
-<?php 
+<?php
 session_start();
-require 'config.php'; // Database connection
+include 'config.php';
 
-$error = "";
+if (!isset($_SESSION['email'])) {
+    die("Session expired. Please request a new OTP.");
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $email = $_SESSION['email'];
+    $new_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-    // Check if user exists in the database
-    $stmt = $conn->prepare("SELECT * FROM sign_up WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
-
-        // Check if password matches
-        if (password_verify($password, $user['password'])) {
-            if ($user['verified'] == 1) {
-                // Store user session
-                $_SESSION['logged_in'] = true;
-                $_SESSION['user'] = [
-                    'username' => $user['username'],
-                    'email' => $user['email'],
-                    'role' => $user['role'],
-                    'profile_pic' => $user['profile_pic'] ?? 'assets/profile.jpg'
-                ];
-
-                // Redirect based on role
-                if ($user['role'] == 'admin') {
-                    header("Location: admin.php");
-                } else {
-                    header("Location: index.php");
-                }
-                exit();
-            } else {
-                $error = "Your email is not verified. Please check your inbox.";
-            }
-        } else {
-            $error = "Invalid email or password!";
-        }
-    } else {
-        $error = "No user found with this email!";
-    }
+    $conn->query("UPDATE sign_up SET password='$new_password' WHERE email='$email'");
+    $_SESSION['message'] = "Password reset successfully!";
+    header("Location: login.php");
+    exit();
 }
 ?>
 
@@ -53,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sushruta Pharmacy</title>
+    <title>Reset Password - Sushruta Pharmacy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -97,35 +66,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4" style="width: 400px;">
-        <h3 class="text-center text-success">Login</h3>
-        <p class="text-center text-muted">Enter your credentials to continue</p>
+        <h3 class="text-center text-success">Reset Password</h3>
+        <p class="text-center text-muted">Enter your new password below</p>
 
-        <?php if (!empty($error)) { ?>
-            <div class="alert alert-danger text-center">
-                <?php echo $error; ?>
+        <?php if (isset($_SESSION['message'])): ?>
+            <div class="alert alert-info text-center">
+                <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
             </div>
-        <?php } ?>
+        <?php endif; ?>
 
         <form method="post">
             <div class="mb-3">
-                <label class="form-label text-success">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label text-success">Password</label>
+                <label class="form-label text-success">New Password</label>
                 <div class="input-group">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter new password" required>
                     <span class="input-group-text" onclick="togglePassword()">
                         <i class="fas fa-eye" id="eye-icon"></i>
                     </span>
                 </div>
             </div>
-            <button type="submit" class="btn btn-custom w-100">Login</button>
+            <button type="submit" class="btn btn-custom w-100">Reset Password</button>
         </form>
         
         <div class="text-center mt-3">
-            <p>Don't have an account? <a href="signup.php" class="text-decoration-none text-success">Sign Up</a></p>
-            <p><a href="forgot_password.php" class="text-decoration-none text-danger">Forgot Password?</a></p>
+            <a href="login.php" class="text-decoration-none text-danger">Back to Login</a>
         </div>
     </div>
 </div>

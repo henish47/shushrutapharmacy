@@ -75,8 +75,10 @@ $address = $_SESSION['user']['address'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - E-commerce</title>
-    <link rel="stylesheet" href="./bootstrap.min.css">
-   <link rel="stylesheet" href="./styles/edit_profile.css">
+
+    <!-- Bootstrap 5 CSS (Using CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles/edit_profile.css">
 </head>
 <body>
 
@@ -86,14 +88,16 @@ $address = $_SESSION['user']['address'] ?? '';
     <h2>Edit Profile</h2>
 
     <!-- Toast Notification -->
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body"> <?= $toastMessage ?> </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <?php if (!empty($toastMessage)) : ?>
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body"><?= $toastMessage ?></div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
         <!-- Profile Picture Preview -->
@@ -141,24 +145,35 @@ $address = $_SESSION['user']['address'] ?? '';
             <textarea class="form-control" id="address" name="address" rows="3"><?= $address ?></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="submit" class="btn btn-primary">  Save Changes</button>
         <a href="index.php" class="btn btn-secondary">Back to Home</a>
     </form>
 </div>
 
- <br>
- 
-<?php include_once "./footer.php"?>
-<script src="./bootstrap.bundle.min.js"></script>
+<br>
+
+<?php include_once "./footer.php" ?>
+
+<!-- Bootstrap 5 JS (Using CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Show toast if message exists
         let toastMessage = "<?= $toastMessage ?>";
         if (toastMessage.trim() !== "") {
             let toastEl = document.getElementById('liveToast');
             let toast = new bootstrap.Toast(toastEl);
             toast.show();
         }
+
+        // Initialize all Bootstrap dropdowns
+        let dropdownElements = document.querySelectorAll('.dropdown-toggle');
+        dropdownElements.forEach(function (dropdown) {
+            new bootstrap.Dropdown(dropdown);
+        });
     });
 </script>
+
 </body>
 </html>

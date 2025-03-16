@@ -7,16 +7,29 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Database connection details
-$host = "localhost"; // Change if using a remote database
-$username = "root"; // Default in Laragon/XAMPP
-$password = ""; // Empty by default in Laragon/XAMPP
-$database = "shushruta_pharmacy"; // Ensure this is correct
+$host = "localhost";
+$username = "root"; 
+$password = ""; 
+$database = "sushruta_pharmacy"; 
 
-// Create connection
 $conn = new mysqli($host, $username, $password, $database);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['inquiry_id'])) {
+    $inquiry_id = $_POST['inquiry_id'];
+
+    // Update status to 'read'
+    $stmt = $conn->prepare("UPDATE inquiries SET status = 'read' WHERE id = ?");
+    $stmt->bind_param("i", $inquiry_id);
+
+    if ($stmt->execute()) {
+        echo "success";
+    } else {
+        echo "error";
+    }
 }
 ?>
