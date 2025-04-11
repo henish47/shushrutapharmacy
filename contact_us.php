@@ -97,8 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Shushruta Pharmacy</title>
+    
     <link rel="stylesheet" href="./bootstrap.min.css">
+    <script src="./bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script src="./jquery-3.7.1.min.js"></script>
+    <script src="./validtion.js"></script>
+
 </head>
 <body>
 <?php include "navbar.php"; ?>
@@ -106,24 +111,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2 class="text-center mb-4">Contact Us</h2>
     <?php if ($success) { echo "<div class='alert alert-success'>$success</div>"; } ?>
     <?php if ($error) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
+
     <form method="POST" action="" id="contactForm" novalidate>
         <div class="mb-3">
             <label class="form-label">Name</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text" name="name" class="form-control" required 
+                   data-validation="required alpha " data-min="3" placeholder="Your name">
+            <span class="text-danger error" id="nameError"></span>
         </div>
+
         <div class="mb-3">
             <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" required 
+                   data-validation="required email" placeholder="you@example.com">
+            <span class="text-danger error" id="emailError"></span>
         </div>
+
         <div class="mb-3">
             <label class="form-label">Message</label>
-            <textarea name="message" class="form-control" rows="5" required></textarea>
+            <textarea name="message" class="form-control" rows="5" required 
+                      data-validation="required min" data-min="10" placeholder="Your message"></textarea>
+            <span class="text-danger error" id="messageError"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+
+        <button type="submit" class="btn btn-success w-100">Send Message</button>
     </form>
 </div>
+
 <br>
 <?php include "footer.php"; ?>
-<script src="./bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

@@ -1,372 +1,254 @@
 <?php
 session_start();
-$products = [
-    ['id' => 1, 'name' => 'Pampers Diaper  ', 'price' => 990, 'image' => './assets/Baby\'s care/image_1.png', 'category' => 'babysCare'],
-    ['id' => 2, 'name' => 'Nestle Cerelac', 'price' => 330, 'image' => './assets/Baby\'s care/image_2.png', 'category' => 'babysCare'],
-    ['id' => 3, 'name' => 'Baby Lotion', 'price' => 800, 'image' => './assets/Baby\'s care/image_3.png', 'category' => 'babysCare'],
-    ['id' => 4, 'name' => 'Nangrow Milk Lotion', 'price' => 1320, 'image' => './assets/Baby\'s care/image_4.webp', 'category' => 'babysCare'],
-    ['id' => 5, 'name' => 'Horlicus', 'price' => 1639, 'image' => './assets/Drinks & supplements/drinks11.webp', 'category' => 'drinksSupplements'],
-    ['id' => 6, 'name' => 'Zincovit Opex', 'price' => 450, 'image' => './assets/Drinks & supplements/tablets_15\'s.png', 'category' => 'drinksSupplements'],
-    ['id' => 7, 'name' => 'Uprise-D3', 'price' => 300, 'image' => './assets/Drinks & supplements/Uprise-D3.png', 'category' => 'drinksSupplements'],
-    ['id' => 8, 'name' => 'PediaSure Milk Powder', 'price' => 573, 'image' => './assets/Drinks & supplements/picture-11 (2).webp', 'category' => 'drinksSupplements'],
-    ['id' => 9, 'name' => 'Cetaphil Soap', 'price' => 901, 'image' => './assets/personal cares/cetaphil_cleaning soap.png', 'category' => 'personalsCare'],
-    ['id' => 10, 'name' => 'Seba-med CARE GEL', 'price' => 737, 'image' => './assets/personal cares/sabamed_Facewash.png', 'category' => 'personalsCare'],
-    ['id' => 11, 'name' => 'Sunscreen Gel', 'price' => 1229, 'image' => './assets/personal cares/picture-11 (4).webp', 'category' => 'personalsCare'],
-    ['id' => 12, 'name' => '8X Shampoo ', 'price' => 4099, 'image' => './assets/personal cares/8X_shampoo.png', 'category' => 'personalsCare'],
-    ['id' => 13, 'name' => 'Protinex Milk Powder', 'price' => 901, 'image' => './assets/Womens care/protinex_tablet\'s.png', 'category' => 'womensCare'],
-    ['id' => 14, 'name' => 'Ultra-Q300', 'price' => 737, 'image' => './assets/Womens care/Ultra_Q300 tablets.png', 'category' => 'womensCare'],
-    ['id' => 15, 'name' => 'Sanitary Pads', 'price' => 1229, 'image' => './assets/Womens care/whisper_pads.png', 'category' => 'womensCare'],
-    ['id' => 16, 'name' => 'Oziva Protien & Herbs', 'price' => 4099, 'image' => './assets/Womens care/picture-11 (7).webp', 'category' => 'womensCare']
-];
 
+require './config.php';
 // Initialize cart if not already initialized
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Handle adding to cart via AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
-    $productId = intval($_POST['product_id']);
-    $product = array_filter($products, fn($p) => $p['id'] === $productId);
+ // Database connection
+$host = "localhost";
+$user = "root"; // Change if needed
+$pass = ""; // Change if you have a password
+$dbname = "sushruta_pharmacy"; // Change to your actual database name
 
-    if (!empty($product)) {
-        $product = array_values($product)[0];
-        $product['quantity'] = 1;
+$conn = new mysqli($host, $user, $pass, $dbname);
 
-        // Check if the product is already in the cart
-        $found = false;
-        foreach ($_SESSION['cart'] as &$cartItem) {
-            if ($cartItem['id'] === $product['id']) {
-                $cartItem['quantity']++;
-                $found = true;
-                break;
-            }
-        }
-
-        // If not found, add new product to the cart
-        if (!$found) {
-            $_SESSION['cart'][] = $product;
-        }
-    }
-    echo "success"; // Respond with success message for AJAX
-    exit;
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// if (!isset($_SESSION['user'])) {
-//     header("Location: login.php"); // Redirect non-logged-in users
-//     exit();
-// }
+
+// Fetch products category-wise (maximum 4 products per category)
+$categories = ['Babys', 'Drinks', 'Personals', 'Womens'];
+
+
+$products = [];
+foreach ($categories as $category) {
+  $stmt = $conn->prepare("SELECT * FROM all_data_products WHERE category = ? AND status = 'active' LIMIT 4");
+  $stmt->bind_param("s", $category); // "s" means string type
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $products[$category] = $result->fetch_all(MYSQLI_ASSOC);
+}
 
 ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHUSHRUTA</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="assets/logo2.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <style>
+        /* 🎠 Improved Carousel */
+        .carousel {
+            position: relative;
+        }
+        .carousel-item {
+            height: 500px;
+        }
+        .carousel-item img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .carousel-caption {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            filter: invert(1);
+        }
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SHUSHRUTA</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="boostrap.min.css">
-        <link rel="shortcut icon" href="./assets/logo2.jpg" type="image/x-icon">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-        <style>
-            .carousel-inner img {
-              height: 800px;
-              object-fit: cover; 
-          }
-          .product-img {
-                transition: transform 0.3s ease-in-out;
+        /* 📱 Responsive */
+        @media (max-width: 768px) {
+            .carousel-item {
+                height: 300px;
             }
-            .product-img:hover {
-                transform: scale(1.05);
+            .carousel-caption {
+                font-size: 14px;
             }
-            .wishlist-btn {
-                z-index: 10;
-                display: block; /* Always visible */
-                
-            }
-          /* Ensure responsiveness */
-          @media (max-width: 768px) {
-              .carousel-inner img {
-                  height: 500px; 
-              }
-          }
-        </style>
-    </head>
-    <body>
-        <?php include_once "navbar.php"; ?>
-            <?php include_once "hero.php"; ?>
-                <br>
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="./assets/slider1.jpeg" class="d-block w-100 slider" alt="Baby Shopping">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="assets/slider2.jpg" class="d-block w-100" alt="Baby Products">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="assets/slider3.jpg" class="d-block w-100" alt="Healthy Baby Food">
-                            <!-- Fix missing image -->
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
+        }
+        .product-img {
+        height: 200px; /* Base height */
+        object-fit: contain;
+        padding: 15px;
+        transition: transform 0.3s ease-in-out;
+    }
 
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-                <div class="container mt-4">
-                    <h1 style="font-weight:700;"><span style="color:green; font-weight:700">Baby's</span> Care</h1>
-                    <div class="row">
-    <?php foreach ($products as $product): ?>
-        <?php if ($product['category'] === 'babysCare'): ?>
+    .product-img:hover {
+        transform: scale(1.08);
+    }
+
+    .card {
+        display: flex; /* Flexbox for consistent card height */
+        flex-direction: column;
+    }
+
+    .card-body {
+        flex-grow: 1; /* Allow card body to expand and fill available space */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Space out the content */
+    }
+
+    .view-product-btn,
+    .add-to-cart-btn,
+    .wishlist-btn {
+        font-size: 0.9rem; /* Base font size */
+        padding: 0.5rem 1rem; /* Base padding */
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .product-img {
+            height: 180px;
+        }
+
+        .view-product-btn,
+        .add-to-cart-btn,
+        .wishlist-btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .product-img {
+            height: 150px;
+        }
+
+        .view-product-btn,
+        .add-to-cart-btn,
+        .wishlist-btn {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<?php include "navbar.php"; ?>
+<?php
+// Database connection details
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "sushruta_pharmacy";
+
+$conn = new mysqli($host, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch only active carousel images
+$query = "SELECT * FROM carousel WHERE status = 'active' ORDER BY created_at DESC";
+$result = $conn->query($query);
+
+if (!$result) {
+    die("Query failed: " . $conn->error);
+}
+
+// Check if there are any active images
+if ($result->num_rows > 0) {
+    ?>
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <?php
+            $i = 0;
+            while ($row = $result->fetch_assoc()) {
+                echo '<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' . $i . '" 
+                class="' . ($i == 0 ? "active" : "") . '" aria-label="Slide ' . ($i + 1) . '"></button>';
+                $i++;
+            }
+            ?>
+        </div>
+        <div class="carousel-inner">
+            <?php
+            $result->data_seek(0); // Reset pointer for the carousel items
+            $i = 0;
+            while ($row = $result->fetch_assoc()) {
+                echo '<div class="carousel-item ' . ($i == 0 ? "active" : "") . '">
+                    <img src="' . $row["image_url"] . '" class="d-block w-100" alt="' . $row["alt_text"] . '">
+                </div>';
+                $i++;
+            }
+            ?>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <?php
+} else {
+    echo "<p>No active images found.</p>";
+}
+
+// ✅ Close the database connection
+$conn->close();
+?>
+
+
+<!-- 🏷️ Display Product Categories -->
+<?php foreach ($categories as $category): ?>
+  <div class="container mt-4">
+    <h2 class="fw-bold text-success"><?php echo htmlspecialchars($category); ?> Care</h2>
+    <div class="row justify-content-center">
+        <?php foreach ($products[$category] as $product): ?>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
                 <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
-                    <!-- Product Image -->
-                    <div class="position-relative">
-                        <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
-                            <img 
-                                src="<?php echo $product['image']; ?>" 
-                                class="card-img-top img-fluid product-img"
-                                alt="<?php echo htmlspecialchars($product['name']); ?>">
-                        </a>
-                    <!-- Wishlist Button -->
-<button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn"
-    onclick="toggleWishlist(this, <?php echo $product['id']; ?>)">
-    <i class="bi <?php echo in_array($product['id'], $_SESSION['wishlist'] ?? []) ? 'bi-heart-fill text-danger' : 'bi-heart'; ?>"></i>
-</button>
-
-                    </div>
-                    <!-- Card Body -->
+                    <a href="productPage.php?id=<?php echo $product['id']; ?>">
+                        <img src="assets/uploads/<?php echo htmlspecialchars($product['image']); ?>" class="card-img-top product-img" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                    </a>
                     <div class="card-body text-center">
-                        <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
-                        <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
-
-                        <!-- Button Group -->
+                        <h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5>
+                        <p class="card-text text-success fw-bold">₹<?php echo number_format($product['price'], 2); ?></p>
                         <div class="d-flex justify-content-center gap-2">
-                            <!-- View Product Button -->
-                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3">
-                                <i class="bi bi-eye"></i> 
+                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-success  px-3 shadow-sm d-flex align-items-center gap-2 view-product-btn">
+                                <i class="bi bi-eye"></i>
                             </a>
-                                                     <!-- Add to Cart Button -->
-                                                     <form method="post" action="add_to_cart.php" class="add-to-cart-form">
-    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
-    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
-    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
-    <button type="submit" name="add_to_cart" class="btn btn-primary">
-        Add to Cart
-    </button>
-</form>
 
-
+                            <form method="post" action="add_to_cart.php">
+                                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                                <button type="submit" class="btn btn-success add-to-cart-btn">Add+</button>
+                            </form>
+                            <button onclick="toggleWishlist(this, <?php echo $product['id']; ?>)" class="btn btn-danger  px-3 wishlist-btn shadow-sm">
+                                <i class="bi bi-heart"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
-    <?php endforeach; ?>
+        <?php endforeach; ?>
+    </div>
 </div>
+<hr>
+<?php endforeach; ?>
 
-                    <div class="text-center mt-3">
-                        <a href="baby'sCare.php" class="btn btn-success btn-lg">View More</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="container mt-4">
-                    <h1 style="font-weight:700;"><span style="color:green; font-weight:700">Drink's and supplement's</span> Care</h1>
-                    <br>
-                    <div class="row">
-                        <?php foreach ($products as $product): ?>
-                            <?php if ($product['category'] === 'drinksSupplements'): ?>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
-                                    <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
-                                        <!-- Product Image -->
-                                        <div class="position-relative">
-                                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
-                             <img 
-                                  src="<?php echo $product['image']; ?>" 
-                                         class="card-img-top img-fluid product-img"
-                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                     >
-                                            </a>
-                                            <!-- Wishlist Button (Always Visible) -->
-                                            <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                        <!-- Card Body -->
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                            <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
-                                            <!-- Button Group (Always Visible) -->
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <!-- View Product Button (No Hover Effect) -->
-                                                <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
-                                                    <i class="bi bi-eye"></i> 
-                                                </a>
-                                                    <!-- Add to Cart Button -->
-                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
-    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
-    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
-    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
-    <button type="submit" name="add_to_cart" class="btn btn-primary">
-        Add to Cart
-    </button>
-</form>
+<?php include "footer.php"; ?>
+<script src="bootstrap.bundle.min.js"></script>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                    <?php endforeach; ?>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="baby'sCare.php" class="btn btn-success btn-lg">View More</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="container mt-4">
-                    <h1 style="font-weight:700;"><span style="color:green; font-weight:700">Personal's</span> Care</h1>
-                    <div class="row">
-                        <?php foreach ($products as $product): ?>
-                            <?php if ($product['category'] === 'personalsCare'): ?>
-
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
-                                    <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
-                                        <!-- Product Image -->
-                                        <div class="position-relative">
-                                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
-                             <img 
-                                  src="<?php echo $product['image']; ?>" 
-                                         class="card-img-top img-fluid product-img"
-                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                     >
-                                            </a>
-                                            <!-- Wishlist Button (Always Visible) -->
-                                            <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                        <!-- Card Body -->
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                            <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
-                                            <!-- Button Group (Always Visible) -->
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <!-- View Product Button (No Hover Effect) -->
-                                                <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
-                                                    <i class="bi bi-eye"></i> 
-                                                </a>
-                                                    <!-- Add to Cart Button -->
-                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
-    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
-    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
-    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
-    <button type="submit" name="add_to_cart" class="btn btn-primary">
-        Add to Cart
-    </button>
-</form>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                    <?php endforeach; ?>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="baby'sCare.php" class="btn btn-success btn-lg">View More</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="container mt-4">
-                    <h1 style="font-weight:700;"><span style="color:green; font-weight:700">Women's</span> Care</h1>
-                    <br>
-                    <div class="row">
-                        <?php foreach ($products as $product): ?>
-                            <?php if ($product['category'] === 'womensCare'): ?>
-
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
-                                    <div class="card w-100 shadow-lg border-0 rounded-3 overflow-hidden">
-                                        <!-- Product Image -->
-                                        <div class="position-relative">
-                                            <a href="productPage.php?id=<?php echo $product['id']; ?>" class="card-img-wrapper d-flex justify-content-center">
-                             <img 
-                                  src="<?php echo $product['image']; ?>" 
-                                         class="card-img-top img-fluid product-img"
-                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                     >
-                                            </a>
-                                            <!-- Wishlist Button (Always Visible) -->
-                                            <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn" onclick="toggleWishlist(this)">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                        <!-- Card Body -->
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold text-dark"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                            <p class="card-text text-muted">Price: <span class="fw-bold text-success">₹<?php echo number_format($product['price'], 2); ?></span></p>
-                                            <!-- Button Group (Always Visible) -->
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <!-- View Product Button (No Hover Effect) -->
-                                                <a href="productPage.php?id=<?php echo $product['id']; ?>" class="btn btn-primary rounded-pill px-3 no-hover">
-                                                    <i class="bi bi-eye"></i> 
-                                                </a>
-                                                      <!-- Add to Cart Button -->
-                            <form method="post" action="add_to_cart.php" class="add-to-cart-form">
-    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
-    <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
-    <input type="hidden" name="product_image" value="<?php echo $product['image']; ?>">
-    <button type="submit" name="add_to_cart" class="btn btn-primary">
-        Add to Cart
-    </button>
-</form>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                    <?php endforeach; ?>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="baby'sCare.php" class="btn btn-success btn-lg">View More</a>
-                    </div>
-                </div>
-                <script>
-                    function toggleWishlist(button) {
-                        const icon = button.querySelector("i");
-                        if (icon.classList.contains("bi-heart")) {
-                            icon.classList.remove("bi-heart");
-                            icon.classList.add("bi-heart-fill");
-                            icon.classList.add("text-danger");
-                        } else {
-                            icon.classList.remove("bi-heart-fill");
-                            icon.classList.add("bi-heart");
-                            icon.classList.remove("text-danger");
-                        }
-                    }
-                </script>
-                <br>
-                <?php include_once "footer.php"; ?>
-            <script src="./bootstrap.bundle.min.js"></script>
-    </body>
-
-    </html>
+</body>
+</html>

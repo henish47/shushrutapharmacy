@@ -12,6 +12,14 @@ $username = "root";
 $password = ""; 
 $database = "sushruta_pharmacy"; 
 
+
+// Ensure session is always started
+if (session_status() == PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 3600); // 1 hour session
+    ini_set('session.cookie_lifetime', 3600);
+    session_start();
+}
+
 $conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {

@@ -6,211 +6,181 @@ include_once 'sidebar.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Order Records</title>
-  <link href="bootstrap.min.css" rel="stylesheet">
-  <script src="bootstrap.bundle.min.js"></script>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Order Records</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <script src="bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
             background-color: #f4f4f4;
             color: #333;
-    }
+        }
 
-    /* Navbar and sidebar adjustments */
-    main {
-      margin-left: 250px; /* Adjust according to sidebar width */
-      padding: 1.5rem;
-      transition: margin-left 0.3s ease;
-    }
+        /* Navbar and sidebar adjustments */
+        main {
+            margin-left: 0; /* Adjusted for responsiveness */
+            padding: 1.5rem;
+            transition: margin-left 0.3s ease;
+        }
 
-    header {
-      background: linear-gradient(90deg, #d6d6d6, #c9c9c9);
-      color: black;
-      text-align: center;
-      padding: 1.5rem 0;
-      margin-bottom: 1rem;
-      margin-top: 65px;
-    }
+        @media (min-width: 768px) {
+            main {
+                margin-left: 250px; /* Restore margin for larger screens */
+            }
+        }
 
-    header h1 {
-      font-size: 2rem;
-      margin: 0;
-    }
+        header {
+            background: linear-gradient(90deg, #d6d6d6, #c9c9c9);
+            color: black;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-bottom: 1rem;
+            margin-top: 65px;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 12px;
-      margin-top: 50px;
-      box-shadow: 0 4px 6px rgba(240,240,240);
-    }
+        header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
 
-    .table-container {
-      overflow-x: auto;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 1rem auto; /* Adjusted margin for responsiveness */
+            padding: 1rem; /* Adjusted padding for responsiveness */
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(240, 240, 240);
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
+        .table-container {
+            overflow-x: auto;
+        }
 
-    table th,
-    table td {
-      text-align: left;
-      padding: 1rem;
-      border-bottom: 1px solid #ddd;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
 
-    table th {
-      background-color: #d6d6d6;
-      color: black;
-      font-weight: bold;
-    }
+        table th,
+        table td {
+            text-align: left;
+            padding: 0.75rem; /* Adjusted padding for responsiveness */
+            border-bottom: 1px solid #ddd;
+        }
 
-    table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
+        table th {
+            background-color: #d6d6d6;
+            color: black;
+            font-weight: bold;
+        }
 
-    table tr:hover {
-      background-color: #e0e0e0;
-    }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-    .status-pending {
-      font-weight: bold;
-      color: #ff9800;
-    }
+        table tr:hover {
+            background-color: rgb(223, 223, 223) !important;
+            color: #000 !important;
+            transition: all 0.3s ease-in-out;
+        }
 
-    .status-shipped {
-      font-weight: bold;
-      color: #4CAF50;
-    }
+        .status-pending {
+            font-weight: bold;
+            color: #ff9800;
+        }
 
-    .status-cancelled {
-      font-weight: bold;
-      color: #e53935;
-    }
+        .status-shipped {
+            font-weight: bold;
+            color: #4CAF50;
+        }
 
-    .btn-status {
-      padding: 8px 16px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
+        .status-cancelled {
+            font-weight: bold;
+            color: #e53935;
+        }
 
-    .btn-shipped {
-      background-color: #4CAF50;
-      color: white;
-    }
+        .btn-status {
+            padding: 6px 12px; /* Adjusted padding for responsiveness */
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem; /* Adjusted font size for responsiveness */
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-    .btn-shipped:hover {
-      background-color: #43a047;
-    }
+        .btn-shipped {
+            background-color: #4CAF50;
+            color: white;
+        }
 
-    .btn-cancelled {
-      background-color: #e53935;
-      color: white;
-    }
+        .btn-shipped:hover {
+            background-color: #43a047;
+        }
 
-    .btn-cancelled:hover {
-      background-color: #d32f2f;
-    }
-    table tr:hover {
-    background-color:rgb(223, 223, 223) !important; /* Light blue background */
-    color: #000 !important; /* Text color black */
-    transition: all 0.3s ease-in-out;
-}
-  </style>
+        .btn-cancelled {
+            background-color: #e53935;
+            color: white;
+        }
+
+        .btn-cancelled:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
-  <!-- Main Content -->
-  <main>
-    <header>
-      <h1>Order Records</h1>
-    </header>
-    <div class="container">
-      <div class="table-container">
-        <table id="orderTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Order ID</th>
-              <th>Customer Name</th>
-              <th>Email</th>
-              <th>Order Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="orderTableBody">
-            <tr>
-              <td>1</td>
-              <td>#ORD001</td>
-              <td>John Doe</td>
-              <td>john.doe@example.com</td>
-              <td>2025-01-22 14:00</td>
-              <td class="status status-pending">Pending</td>
-              <td><button class="btn-status btn-shipped" onclick="toggleOrderStatus(this, 1)">Ship</button></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>#ORD002</td>
-              <td>Jane Smith</td>
-              <td>jane.smith@example.com</td>
-              <td>2025-01-22 13:45</td>
-              <td class="status status-shipped">Shipped</td>
-              <td><button class="btn-status btn-cancelled" onclick="toggleOrderStatus(this, 2)">Cancel</button></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>#ORD003</td>
-              <td>Sam Wilson</td>
-              <td>sam.wilson@example.com</td>
-              <td>2025-01-22 13:30</td>
-              <td class="status status-cancelled">Cancelled</td>
-              <td><button class="btn-status btn-shipped" onclick="toggleOrderStatus(this, 3)">Ship</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </main>
-<!---
-  <script>
-    function toggleOrderStatus(button, orderId) {
-      const row = button.closest('tr');
-      const statusCell = row.querySelector('.status');
-
-      if (statusCell.classList.contains('status-pending')) {
-        statusCell.classList.remove('status-pending');
-        statusCell.classList.add('status-shipped');
-        statusCell.textContent = 'Shipped';
-        button.textContent = 'Cancel';
-        button.classList.remove('btn-shipped');
-        button.classList.add('btn-cancelled');
-      } else if (statusCell.classList.contains('status-shipped')) {
-        statusCell.classList.remove('status-shipped');
-        statusCell.classList.add('status-cancelled');
-        statusCell.textContent = 'Cancelled';
-        button.textContent = 'Ship';
-        button.classList.remove('btn-cancelled');
-        button.classList.add('btn-shipped');
-      } else {
-        statusCell.classList.remove('status-cancelled');
-        statusCell.classList.add('status-pending');
-        statusCell.textContent = 'Pending';
-        button.textContent = 'Ship';
-        button.classList.remove('btn-cancelled');
-        button.classList.add('btn-shipped');
-      }
-    }
-  </script>
--->
-</body>
+    <main>
+        <header>
+            <h1>Order Records</h1>
+        </header>
+        <div class="container">
+            <div class="table-container">
+                <table id="orderTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Email</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>#ORD001</td>
+                            <td>John Doe</td>
+                            <td>john.doe@example.com</td>
+                            <td>2025-01-22 14:00</td>
+                            <td class="status status-pending">Pending</td>
+                            <td><button class="btn-status btn-shipped" onclick="toggleOrderStatus(this, 1)">Ship</button></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>#ORD002</td>
+                            <td>Jane Smith</td>
+                            <td>jane.smith@example.com</td>
+                            <td>2025-01-22 13:45</td>
+                            <td class="status status-shipped">Shipped</td>
+                            <td><button class="btn-status btn-cancelled" onclick="toggleOrderStatus(this, 2)">Cancel</button></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>#ORD003</td>
+                            <td>Sam Wilson</td>
+                            <td>sam.wilson@example.com</td>
+                            <td>2025-01-22 13:30</td>
+                            <td class="status status-cancelled">Cancelled</td>
+                            <td><button class="btn-status btn-shipped" onclick="toggleOrderStatus(this, 3)">Ship</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    </body>
 </html>

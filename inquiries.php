@@ -18,7 +18,7 @@ include_once 'sidebar.php';
     <title>Inquiries</title>
     <link href="bootstrap.min.css" rel="stylesheet">
     <script src="bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -26,21 +26,30 @@ include_once 'sidebar.php';
             color: #333;
         }
         main {
-            margin-left: 250px;
-            padding: 1.5rem;
+            margin-left: 0;
+            padding: 1rem;
+            transition: margin-left 0.3s ease;
         }
+
+        @media (min-width: 768px) {
+            main {
+                margin-left: 250px;
+                padding: 1.5rem;
+            }
+        }
+
         header {
             background: linear-gradient(90deg, #d6d6d6, #c9c9c9);
             color: black;
             text-align: center;
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             margin-bottom: 1rem;
             margin-top: 60px;
         }
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            margin: 1rem auto;
+            padding: 1rem;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -52,7 +61,7 @@ include_once 'sidebar.php';
         }
         th, td {
             text-align: left;
-            padding: 1rem;
+            padding: 0.75rem;
             border-bottom: 1px solid #ddd;
         }
         th {
@@ -62,15 +71,24 @@ include_once 'sidebar.php';
         tr:nth-child(even) { background-color: #f9f9f9; }
         tr:hover { background-color: #e0e0e0; }
         .btn-status {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: none;
             cursor: pointer;
-            font-size: 0.9rem;
-            border-radius: 8px;
+            font-size: 0.8rem;
+            border-radius: 6px;
             transition: all 0.3s ease;
         }
         .btn-read { background-color: #ff9800; color: white; }
         .btn-read:hover { background-color: #fb8c00; }
+
+        /* Responsive Table Adjustments */
+        @media (max-width: 767px) {
+            table thead { display: none; }
+            table, table tbody, table tr, table td { display: block; }
+            table tr { margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 8px; }
+            table td { position: relative; padding-left: 50%; text-align: left; }
+            table td:before { position: absolute; top: 6px; left: 6px; width: 45%; padding-right: 10px; white-space: nowrap; font-weight: bold; content: attr(data-label); }
+        }
     </style>
 </head>
 <body>
@@ -90,25 +108,24 @@ include_once 'sidebar.php';
                 </tr>
             </thead>
             <tbody>
-    <?php 
-    $no = 1; // Initialize the counter before the loop
-    while ($row = $result->fetch_assoc()) { ?>
-        <tr id="row-<?php echo $row['id']; ?>">
-            <td><?php echo $no++; ?></td>
-            <td><?php echo htmlspecialchars($row['name']); ?></td>
-            <td><?php echo htmlspecialchars($row['email']); ?></td>
-            <td><?php echo htmlspecialchars($row['description']); ?></td>
-            <td>
-                <?php if ($row['status'] == 'unread') { ?>
-                    <button class="btn-status btn-read" data-id="<?php echo $row['id']; ?>" onclick="markAsRead(<?php echo $row['id']; ?>)">Mark Read</button>
-                <?php } else { ?>
-                    <span class="text-success">Read</span>
+                <?php 
+                $no = 1;
+                while ($row = $result->fetch_assoc()) { ?>
+                    <tr id="row-<?php echo $row['id']; ?>">
+                        <td data-label="No."><?php echo $no++; ?></td>
+                        <td data-label="Name"><?php echo htmlspecialchars($row['name']); ?></td>
+                        <td data-label="Email"><?php echo htmlspecialchars($row['email']); ?></td>
+                        <td data-label="Description"><?php echo htmlspecialchars($row['description']); ?></td>
+                        <td data-label="Action">
+                            <?php if ($row['status'] == 'unread') { ?>
+                                <button class="btn-status btn-read" data-id="<?php echo $row['id']; ?>" onclick="markAsRead(<?php echo $row['id']; ?>)">Mark Read</button>
+                            <?php } else { ?>
+                                <span class="text-success">Read</span>
+                            <?php } ?>
+                        </td>
+                    </tr>
                 <?php } ?>
-            </td>
-        </tr>
-    <?php } ?>
-</tbody>
-
+            </tbody>
         </table>
     </div>
 </main>

@@ -210,7 +210,7 @@ nav {
 
 /* ========== Button Styles ========== */
 .btn-primary {
-  background-color: #2ecc71;
+  background-color: #2acb6d;
   border: none;
   font-weight: bold;
   padding: 10px 20px;
@@ -267,8 +267,6 @@ nav {
   .left_right_img {
     display: none;
   }
-
-
   .card {
     text-align: center;
     margin-top: 20px;

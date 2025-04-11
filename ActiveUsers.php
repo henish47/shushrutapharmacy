@@ -1,6 +1,7 @@
 <?php
  include_once './admin_navbar.php';
  include_once 'sidebar.php';
+ include "admin_protect.php"; // Protect this page
 ?>
 
 <!DOCTYPE html>

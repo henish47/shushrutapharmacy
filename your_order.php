@@ -1,58 +1,59 @@
-<?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Dummy order data (Replace this with actual database query)
-$orders = isset($_SESSION['orders']) ? $_SESSION['orders'] : [];
-
-// Handle rating submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST['star'])) {
-    $productId = intval($_POST['product_id']);
-    $rating = intval($_POST['star']);
-
-    // Store rating in session (Replace this with database update in real project)
-    $_SESSION['orders'][$productId]['rating'] = $rating;
-
-    // Redirect to prevent form resubmission
-    header("Location: your_orders.php");
-    exit;
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHUSHRUTA - Your Orders</title>
-    <link rel="stylesheet" href="bootstrap.min.css">
-    <script src="./jquery-3.7.1.min.js"></script>
-    <script src="./additional-methods.js"></script>
-    <script src="./jquery.validate.min.js"></script>
+   
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <script src="./bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./jquery/bootstrap-icons.css">
     <link rel="shortcut icon" href="./assets/logo2.jpg" type="image/x-icon">
-
     <style>
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
         }
         .order-container {
-            max-width: 400px;
             background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
-        .card-title {
-            color: #28a745;
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .order-table th,
+        .order-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .order-table th {
+            background-color: #28a745;
+            color: #fff;
             font-weight: bold;
         }
-        .card-text {
-            font-size: 18px;
-            color: #555;
+        .order-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .order-table img {
+            max-width: 80px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            transform: scale(1.05);
         }
         .rating {
             display: flex;
@@ -63,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST[
             display: none;
         }
         .rating label {
-            font-size: 30px;
+            font-size: 24px;
             color: gray;
             cursor: pointer;
             transition: color 0.3s;
@@ -73,18 +74,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST[
         .rating label:hover ~ label {
             color: gold;
         }
-        .btn-primary {
-            background-color: #28a745;
-            border-color: #28a745;
+        .text-success {
+            color: #28a745 !important;
         }
-        .btn-primary:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
+        .text-primary {
+            color: #007bff !important;
+        }
+        .fw-bold {
+            font-weight: 600 !important;
+        }
+        .shadow {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        .col-12 {
+            padding: 0 15px;
         }
     </style>
 </head>
 <body>
-
     <?php include_once "navbar.php"; ?>
 
     <div class="container mt-4">
@@ -93,39 +110,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST[
         </h1>
 
         <div class="row">
-            <?php if (!empty($orders)): ?>
-                <?php foreach ($orders as $order): ?>
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <div class="card order-container">
-                            <img src="<?php echo htmlspecialchars($order['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($order['name']); ?>">
-                            <div class="card-body text-center">
-                                <h5 class="card-title"><?php echo htmlspecialchars($order['name']); ?></h5>
-                                <p class="card-text">Price: <strong>₹<?php echo number_format($order['price'], 2); ?></strong></p>
+            <div class="col-12">
+                <div class="order-container shadow">
+                    <!-- Orders Table -->
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Product Image</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Static Order 1 -->
+                            <tr>
+                                <td><img src="./assets/Baby's care/image_1.png" alt="Baby Shampoo"></td>
+                                <td>Baby Shampoo</td>
+                                <td>₹249.00</td>
+                                <td>2</td>
+                                <td>₹498.00</td>
+                                <td>
+                                    <div class="rating">
+                                        <form method="post">
+                                            <input type="hidden" name="product_id" value="1">
+                                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                                                <input type="radio" name="star" id="star<?php echo $i . '_1'; ?>" value="<?php echo $i; ?>">
+                                                <label for="star<?php echo $i . '_1'; ?>">★</label>
+                                            <?php endfor; ?>
+                                            <button type="submit" class="btn btn-success btn-sm mt-2">Submit</button>
+                                        </form>
+                                    </div>
+                                </td>
+                                
+                            </tr>
 
-                                <div class="rating">
-                                    <form method="post">
-                                        <input type="hidden" name="product_id" value="<?php echo $order['id']; ?>">
-                                        
-                                        <?php for ($i = 5; $i >= 1; $i--): ?>
-                                            <input type="radio" name="star" id="star<?php echo $i . '_' . $order['id']; ?>" value="<?php echo $i; ?>"
-                                                <?php echo isset($order['rating']) && $order['rating'] == $i ? 'checked' : ''; ?>>
-                                            <label for="star<?php echo $i . '_' . $order['id']; ?>">★</label>
-                                        <?php endfor; ?>
+                            <!-- Static Order 2 -->
+                            <tr>
+                                <td><img src="./assets/Baby's care/image_2.png" alt="Baby Lotion"></td>
+                                <td>Baby Lotion</td>
+                                <td>₹599.00</td>
+                                <td>1</td>
+                                <td>₹599.00</td>
+                                <td>
+                                    <div class="rating">
+                                        <form method="post">
+                                            <input type="hidden" name="product_id" value="2">
+                                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                                                <input type="radio" name="star" id="star<?php echo $i . '_2'; ?>" value="<?php echo $i; ?>">
+                                                <label for="star<?php echo $i . '_2'; ?>">★</label>
+                                            <?php endfor; ?>
+                                            <button type="submit" class="btn btn-success btn-sm mt-2">Submit</button>
+                                        </form>
+                                    </div>
+                                </td>
+                               
+                            </tr>
 
-                                        <button type="submit" class="btn btn-success btn-sm mt-3">Submit Rating</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-center">No orders found.</p>
-            <?php endif; ?>
+                            <!-- Static Order 3 -->
+                            <tr>
+                                <td><img src="./assets/Baby's care/image_3.png" alt="Baby Oil"></td>
+                                <td>Baby Oil</td>
+                                <td>₹799.00</td>
+                                <td>1</td>
+                                <td>₹799.00</td>
+                                <td>
+                                    <div class="rating">
+                                        <form method="post">
+                                            <input type="hidden" name="product_id" value="3">
+                                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                                                <input type="radio" name="star" id="star<?php echo $i . '_3'; ?>" value="<?php echo $i; ?>">
+                                                <label for="star<?php echo $i . '_3'; ?>">★</label>
+                                            <?php endfor; ?>
+                                            <button type="submit" class="btn btn-success btn-sm mt-2">Submit</button>
+                                        </form>
+                                    </div>
+                                </td>
+                              
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <?php include_once "footer.php"; ?>
-    
+
+    <script>
+        // Simulate rating submission
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const productId = this.querySelector('input[name="product_id"]').value;
+                const rating = this.querySelector('input[name="star"]:checked')?.value || 'No rating selected';
+                alert(`Rating submitted for Product ${productId}: ${rating} stars`);
+            });
+        });
+    </script>
 </body>
 </html>
