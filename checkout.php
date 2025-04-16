@@ -5,7 +5,7 @@ include "./config.php";
 // Security: Prevent direct access
 define('IN_CART', true);
 
-// ✅ Ensure user is logged in
+// Ensure user is logged in
 if (!isset($_SESSION['user']['id'])) {
     $_SESSION['alert'] = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
                             <strong>Warning!</strong> Please log in to proceed to checkout.
@@ -30,14 +30,14 @@ $valid_coupons = [
     "DISCOUNT30" => 30
 ];
 
-// ✅ Fetch User Details (fixed from orders to users table)
+// Fetch User Details
 $stmt = $conn->prepare("SELECT name, email, phone, address, city, state, pincode FROM orders WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// ✅ Fetch Cart Items
+// Fetch Cart Items
 $stmt = $conn->prepare("SELECT c.product_id, p.name, p.price, p.image, c.quantity 
                         FROM cart c 
                         JOIN all_data_products p ON c.product_id = p.id 
@@ -52,16 +52,16 @@ while ($row = $result->fetch_assoc()) {
     $subtotal += $row['price'] * $row['quantity'];
 }
 
-// ✅ Apply Discount if Coupon is Set
+// Apply Discount if Coupon is Set
 if (isset($_SESSION['coupon_code']) && array_key_exists($_SESSION['coupon_code'], $valid_coupons)) {
     $discount_percentage = $valid_coupons[$_SESSION['coupon_code']];
 }
 
-// ✅ Calculate Final Total
+// Calculate Final Total
 $discount_amount = ($subtotal * $discount_percentage) / 100;
 $total = $subtotal - $discount_amount;
 
-// ✅ Handle Checkout Submission
+// Handle Checkout Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     // Validate CSRF token
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     $payment_details = [];
     if ($payment_method === 'online_payment') {
         $payment_details['payment_type'] = $_POST['payment_type'] ?? '';
-        $payment_details['card_number'] = isset($_POST['card_number']) ? str_replace(' ', '', $_POST['card_number']) : '';
+        $payment_details['card_number'] = isset($_POST['card_number']) ? substr(str_replace(' ', '', $_POST['card_number']), -4) : '';
         $payment_details['card_expiry'] = $_POST['card_expiry'] ?? '';
         $payment_details['card_cvv'] = $_POST['card_cvv'] ?? '';
         $payment_details['upi_id'] = $_POST['upi_id'] ?? '';
@@ -132,58 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
         exit();
     }
     
-    // Validate payment details if online payment
-    if ($payment_method === 'online_payment') {
-        if (empty($payment_details['payment_type'])) {
-            $_SESSION['alert'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Error!</strong> Please select a payment type.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-            header("Location: checkout.php");
-            exit();
-        }
-        
-        // Validate card details if card payment
-        if ($payment_details['payment_type'] === 'card') {
-            if (empty($payment_details['card_number']) || !preg_match('/^\d{16}$/', $payment_details['card_number'])) {
-                $_SESSION['alert'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Error!</strong> Please enter a valid 16-digit card number.
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                      </div>';
-                header("Location: checkout.php");
-                exit();
-            }
-            
-            if (empty($payment_details['card_expiry']) || !preg_match('/^(0[1-9]|1[0-2])\/?([0-9]{2})$/', $payment_details['card_expiry'])) {
-                $_SESSION['alert'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Error!</strong> Please enter a valid expiry date (MM/YY).
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                      </div>';
-                header("Location: checkout.php");
-                exit();
-            }
-            
-            if (empty($payment_details['card_cvv']) || !preg_match('/^\d{3,4}$/', $payment_details['card_cvv'])) {
-                $_SESSION['alert'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Error!</strong> Please enter a valid CVV (3 or 4 digits).
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                      </div>';
-                header("Location: checkout.php");
-                exit();
-            }
-        }
-        
-        // Validate UPI ID if UPI payment
-        if ($payment_details['payment_type'] === 'upi' && !preg_match('/^[\w.-]+@[\w]+$/', $payment_details['upi_id'])) {
-            $_SESSION['alert'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Error!</strong> Please enter a valid UPI ID (e.g., example@upi).
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-            header("Location: checkout.php");
-            exit();
-        }
-    }
-    
     // Start transaction
     $conn->begin_transaction();
     
@@ -215,6 +163,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
         
         // Commit transaction
         $conn->commit();
+        
+        // Process payment if online payment
+        if ($payment_method === 'online_payment') {
+            // In a real implementation, you would integrate with a payment gateway here
+            // For demo purposes, we'll simulate a successful payment
+            
+            // Update order status to 'paid'
+            $stmt = $conn->prepare("UPDATE orders SET status = 'paid' WHERE id = ?");
+            $stmt->bind_param("i", $order_id);
+            $stmt->execute();
+            
+            // Record payment transaction
+            $transaction_id = 'TXN' . time() . rand(1000, 9999);
+            $stmt = $conn->prepare("INSERT INTO payments (order_id, user_id, amount, transaction_id, payment_method, status) 
+                                   VALUES (?, ?, ?, ?, ?, 'completed')");
+            $stmt->bind_param("iidss", $order_id, $user_id, $total, $transaction_id, $payment_method);
+            $stmt->execute();
+        }
         
         // Redirect to order confirmation
         $_SESSION['order_id'] = $order_id;
@@ -519,11 +485,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
                         </div>
                         
                         <div class="d-grid mt-3">
-                            <a href="order_confirmation.php">
                             <button type="submit" name="place_order" class="btn btn-success btn-lg py-3">
                                 <i class="bi bi-check-circle"></i> Place Order
                             </button>
-                            </a>
                         </div>
                         
                         <div class="text-center mt-3">
